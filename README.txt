@@ -4,8 +4,8 @@ Things tested:
 	index.html autocomplete
 	audio, video, images
 	?key=value url dictionaries
-Things to add:
 	simple-socket
+Things to add:
 	simple-battle-royale
 	url encoding
 More usefull packages:
