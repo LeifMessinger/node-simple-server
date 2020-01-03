@@ -3,6 +3,17 @@ var http = require('http');
 var sauce = require(__dirname + '/simple-server');
 var server = http.createServer(sauce.http);
 server.listen(8080);
+var connections = [];
+var io = require('socket.io').listen(server);
+io.sockets.on('connection', function(socket) {
+    connections.push(socket);
+    console.log('Connected: %s sockets connected', connections.length);
+	io.emit('connected', socket.username);
+    socket.on('disconnect', function(data) {
+        connections.splice(connections.indexOf(socket), 1);
+        console.log('Disconnected: %s sockets connected', connections.length);    
+    });
+});
 console.log('Started...');
 /*var http = require('http');
 var fs = require('fs');
