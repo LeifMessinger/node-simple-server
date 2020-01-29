@@ -30,6 +30,7 @@
       var mousePos = {x:0,y:0};
       var mouseWeight = .2;
       var camera = {x:0,y:0};
+      var player = {x:0,y:0,up:false,down:false,left:false,right:false};
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
       var stroke = 'black';
@@ -46,9 +47,10 @@
 			  ctx.fillStyle = pattern;
 			  // fill, etc.
 			}*/
+      
       function updateCamera(){
-        camera = {x:-(mousePos.x-(screen.width/2))*mouseWeight,y:-(mousePos.y-(screen.height/2))*mouseWeight};
-        draw();
+        camera = {x:(-(mousePos.x-(screen.width/2))*mouseWeight)-player.x,y:(-(mousePos.y-(screen.height/2))*mouseWeight)+player.y};
+        //draw();
       }
 			function resize(){//Resize canvas to window size
 				let win = window,
@@ -69,10 +71,19 @@
 			} else { //The browser does not support Javascript event binding
 			}
 			resize();
+      function walk(){
+        if(player.up) player.y += 1;
+        if(player.down) player.y -= 1;
+        if(player.right) player.x += 1;
+        if(player.left) player.x -= 1;
+      }
 			function draw(){
+        walk();
+        updateCamera();
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(0,0,screen.width,screen.height);
 				drawRoom(makeRoom(thisRoomIsBigEnoughForTheBothOfUs));
+        window.requestAnimationFrame(draw);
         //drawRoom(makeRoom({x:1,y:0}));
 			}
 			function drawRoom(room){
@@ -107,8 +118,44 @@
 						}
 					}
 				}
-				draw();
+				//draw();
 			}
+      function onKeyDown(event) {
+        let keyCode = event.keyCode;
+        switch (keyCode) {
+          case 68: //d
+            player.right = true;
+            break;
+          case 83: //s
+            player.down = true;
+            break;
+          case 65: //a
+            player.left = true;
+            break;
+          case 87: //w
+            player.up = true;
+            break;
+        }
+      }
+      function onKeyUp(event) {
+        let keyCode = event.keyCode;
+        switch (keyCode) {
+          case 68: //d
+            player.right = false;
+            break;
+          case 83: //s
+            player.down = false;
+            break;
+          case 65: //a
+            player.left = false;
+            break;
+          case 87: //w
+            player.up = false;
+            break;
+        }
+      }
+      window.addEventListener("keydown", onKeyDown, false);
+      window.addEventListener("keyup", onKeyUp, false);
 			document.addEventListener("click", registerMouseClick);
       screen.onmousemove = function(event){
         mousePos = {x:event.clientX,y:event.clientY};
