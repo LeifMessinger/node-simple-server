@@ -24,8 +24,9 @@
 		<br>
 		<script>
 			var screen = document.getElementById('screen');
-			var scale = {x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
-			var roomSize = {x:1,y:1};//Size compared to a normal room
+			var zoom = {x:1,y:1};//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
+      var screenScale = 1;
+			var roomSize = {x:1,y:0.5625};//Size of a normal room
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
 			var thisRoomIsBigEnoughForTheBothOfUs = {x:0,y:0};//single room, x and y are pos on map
@@ -48,6 +49,7 @@
 					y = win.innerHeight|| docElem.clientHeight|| body.clientHeight;
 				screen.height = y;
 				screen.width = x;
+        screenScale = Math.min(x,y);
 				draw();
 			};
 			if(window.addEventListener) { //change canvas size when resized
@@ -66,8 +68,9 @@
 				console.log(room);
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
-				roomWidth = scale.x*roomSize.x*screen.width;
-				roomHeight = scale.y*roomSize.y*screen.height;
+				let aspectRatio = screen.width/screen.height,
+          roomWidth = zoom.x*roomSize.x*screenScale
+          roomHeight = zoom.y*roomSize.y*screenScale
 				roomPos = {x:(screen.width/2) - (roomWidth/2) + (pos.x*roomWidth),y:(screen.height/2) - (roomHeight/2) + (pos.y*roomHeight)}; //screen pos
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
 			}
