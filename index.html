@@ -30,7 +30,7 @@
       var mousePos = {x:0,y:0};
       var mouseWeight = .2;
       var camera = {x:0,y:0};
-      var player = {x:0,y:0,up:false,down:false,left:false,right:false,speed:10};
+      var player = {x:0,y:0,up:false,down:false,left:false,right:false,speed:.01}; //coordinates are % of a room
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
       var stroke = 'black';
@@ -49,7 +49,7 @@
 			}*/
       
       function updateCamera(){
-        camera = {x:(-(mousePos.x-(screen.width/2))*mouseWeight)-player.x,y:(-(mousePos.y-(screen.height/2))*mouseWeight)+player.y};
+        camera = {x:(-(mousePos.x-(screen.width/2))*mouseWeight)-player.x*(screenScale*roomSize.x),y:(-(mousePos.y-(screen.height/2))*mouseWeight)+player.y*(screenScale*roomSize.y)};
         //draw();
       }
 	  function toScreenPos(pos,size){ //pos = position relative to player
@@ -98,11 +98,11 @@
 			}
 			function drawCharacter(character){
 				let size = screenScale/20,
-				pos = toScreenPos({x:character.x,y:character.y},size);//{x:screen.width/2-(size/2)+(camera.x)+player.x,y:screen.height/2-(size/2)+(camera.y)-player.y};
+				pos = makeRoom({x:character.x,y:character.y});//,size);//{x:screen.width/2-(size/2)+(camera.x)+player.x,y:screen.height/2-(size/2)+(camera.y)-player.y};
 				ctx.fillStyle = 'red';
 				//ctx.fillRect(pos.x,pos.y,size,size);
-				ctx.strokeRect(pos.x,pos.y,size,size);
-				ctx.fillRect(pos.x,pos.y,size,size);
+				ctx.strokeRect(pos.pos.x,pos.pos.y,size,size);
+				ctx.fillRect(pos.pos.x,pos.pos.y,size,size);
 				
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
@@ -116,21 +116,7 @@
 			draw();
 			function registerMouseClick(event) {
 				console.log("clientX: " + event.clientX + " - clientY: " + event.clientY);
-				if(woke){
-					if(event.clientX > screen.width/3 && event.clientX < 2*screen.width/3){
-						if(event.clientY > 0 && event.clientY < screen.height/3){
-							socket.emit('choice','rock');
-						}else{
-							if(event.clientY > screen.height/3 && event.clientY < 2*screen.height/3){
-								socket.emit('choice','paper');
-							}else{
-								if(event.clientY > 2*screen.height/3 && event.clientY < screen.height){
-									socket.emit('choice','scissors');
-								}
-							}
-						}
-					}
-				}
+        console.log(camera);
 				//draw();
 			}
       function onKeyDown(event) {
