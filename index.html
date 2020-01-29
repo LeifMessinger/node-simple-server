@@ -25,9 +25,10 @@
 		<script>
 			var screen = document.getElementById('screen');
 			var zoom = {x:1,y:1};//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
-      var screenScale = 1;
+      var screenScale = 1; //Math.min(screen.width,screen.height)
 			var roomSize = {x:1,y:0.5625};//Size of a normal room
       var mousePos = {x:0,y:0};
+      var mouseWeight = .2; //Math.min(screen.width,screen.height)/Math.max(screen.width,screen.height)
       var camera = {x:0,y:0};
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
@@ -45,6 +46,10 @@
 			  ctx.fillStyle = pattern;
 			  // fill, etc.
 			}*/
+      function updateCamera(){
+        camera = {x:-(mousePos.x-(screen.width/2))*mouseWeight,y:-(mousePos.y-(screen.height/2))*mouseWeight};
+        draw();
+      }
 			function resize(){//Resize canvas to window size
 				let win = window,
 					doc = document,
@@ -54,9 +59,10 @@
 					y = win.innerHeight|| docElem.clientHeight|| body.clientHeight;
 				screen.height = y;
 				screen.width = x;
-        screenScale = Math.min(x,y);
+        screenScale = Math.min(x,y*(1/0.5625));
+        mouseWeight = .2;//Math.min(screen.width,screen.height*(1/0.5625))/Math.max(screen.width,screen.height*(1/0.5625));
         ctx.lineWidth = screenScale/100;
-				draw();
+        updateCamera();
 			};
 			if(window.addEventListener) { //change canvas size when resized
 				window.addEventListener('resize',resize, true); //the true is "useCapture"
@@ -67,7 +73,7 @@
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(0,0,screen.width,screen.height);
 				drawRoom(makeRoom(thisRoomIsBigEnoughForTheBothOfUs));
-        drawRoom(makeRoom({x:1,y:0}));
+        //drawRoom(makeRoom({x:1,y:0}));
 			}
 			function drawRoom(room){
 				ctx.fillStyle = 'sienna';
@@ -106,8 +112,7 @@
 			document.addEventListener("click", registerMouseClick);
       screen.onmousemove = function(event){
         mousePos = {x:event.clientX,y:event.clientY};
-        camera = mousePos;
-        draw();
+        updateCamera();
       }
 		</script>
 		<!--<script>
