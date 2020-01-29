@@ -27,8 +27,13 @@
 			var zoom = {x:1,y:1};//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
       var screenScale = 1;
 			var roomSize = {x:1,y:0.5625};//Size of a normal room
+      var mousePos = {x:0,y:0};
+      var camera = {x:0,y:0};
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
+      var stroke = 'black';
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = screenScale/100;
 			var thisRoomIsBigEnoughForTheBothOfUs = {x:0,y:0};//single room, x and y are pos on map
 			/* How to create pattern for later
 			var img = new Image;
@@ -50,6 +55,7 @@
 				screen.height = y;
 				screen.width = x;
         screenScale = Math.min(x,y);
+        ctx.lineWidth = screenScale/100;
 				draw();
 			};
 			if(window.addEventListener) { //change canvas size when resized
@@ -61,17 +67,20 @@
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(0,0,screen.width,screen.height);
 				drawRoom(makeRoom(thisRoomIsBigEnoughForTheBothOfUs));
+        drawRoom(makeRoom({x:1,y:0}));
 			}
 			function drawRoom(room){
 				ctx.fillStyle = 'sienna';
+        ctx.strokeRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				ctx.fillRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				console.log(room);
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
 				let aspectRatio = screen.width/screen.height,
-          roomWidth = zoom.x*roomSize.x*screenScale
-          roomHeight = zoom.y*roomSize.y*screenScale
-				roomPos = {x:(screen.width/2) - (roomWidth/2) + (pos.x*roomWidth),y:(screen.height/2) - (roomHeight/2) + (pos.y*roomHeight)}; //screen pos
+          roomWidth = zoom.x*roomSize.x*screenScale,
+          roomHeight = zoom.y*roomSize.y*screenScale,
+				roomPos = {x:(camera.x + (screen.width/2) - (roomWidth/2) + (pos.x*roomWidth)),
+          y:(camera.y + (screen.height/2) - (roomHeight/2) - (pos.y*roomHeight))}; //y positive is up
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
 			}
 			draw();
@@ -95,6 +104,11 @@
 				draw();
 			}
 			document.addEventListener("click", registerMouseClick);
+      screen.onmousemove = function(event){
+        mousePos = {x:event.clientX,y:event.clientY};
+        camera = mousePos;
+        draw();
+      }
 		</script>
 		<!--<script>
 			var socket = io.connect();
