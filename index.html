@@ -28,7 +28,7 @@
       var screenScale = 1; //Math.min(screen.width,screen.height)
 			var roomSize = {x:1,y:0.5625};//Size of a normal room
       var mousePos = {x:0,y:0};
-      var mouseWeight = .2; //Math.min(screen.width,screen.height)/Math.max(screen.width,screen.height)
+      var mouseWeight = .2;
       var camera = {x:0,y:0};
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
@@ -59,8 +59,8 @@
 					y = win.innerHeight|| docElem.clientHeight|| body.clientHeight;
 				screen.height = y;
 				screen.width = x;
-        screenScale = Math.min(x,y*(1/0.5625));
-        mouseWeight = .2;//Math.min(screen.width,screen.height*(1/0.5625))/Math.max(screen.width,screen.height*(1/0.5625));
+        screenScale = Math.min(x,y*(1/roomSize.y));
+        mouseWeight = .2;
         ctx.lineWidth = screenScale/100;
         updateCamera();
 			};
@@ -79,7 +79,7 @@
 				ctx.fillStyle = 'sienna';
         ctx.strokeRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				ctx.fillRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
-				console.log(room);
+				//console.log(room);
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
 				let aspectRatio = screen.width/screen.height,
