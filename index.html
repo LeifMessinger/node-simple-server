@@ -30,7 +30,7 @@
       var mousePos = {x:0,y:0};
       var mouseWeight = .2;
       var camera = {x:0,y:0};
-      var player = {x:0,y:0,up:false,down:false,left:false,right:false};
+      var player = {x:0,y:0,up:false,down:false,left:false,right:false,speed:10};
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
       var stroke = 'black';
@@ -52,6 +52,9 @@
         camera = {x:(-(mousePos.x-(screen.width/2))*mouseWeight)-player.x,y:(-(mousePos.y-(screen.height/2))*mouseWeight)+player.y};
         //draw();
       }
+	  function toScreenPos(pos,size){ //pos = position relative to player
+		return {x:screen.width/2-(size/2)+(camera.x)+pos.x,y:screen.height/2-(size/2)+(camera.y)-pos.y};
+	  }
 			function resize(){//Resize canvas to window size
 				let win = window,
 					doc = document,
@@ -72,10 +75,10 @@
 			}
 			resize();
       function walk(){
-        if(player.up) player.y += 1;
-        if(player.down) player.y -= 1;
-        if(player.right) player.x += 1;
-        if(player.left) player.x -= 1;
+        if(player.up) player.y += player.speed;
+        if(player.down) player.y -= player.speed;
+        if(player.right) player.x += player.speed;
+        if(player.left) player.x -= player.speed;
       }
 			function draw(){
         walk();
@@ -83,6 +86,7 @@
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(0,0,screen.width,screen.height);
 				drawRoom(makeRoom(thisRoomIsBigEnoughForTheBothOfUs));
+				drawCharacter(player);
         window.requestAnimationFrame(draw);
         //drawRoom(makeRoom({x:1,y:0}));
 			}
@@ -91,6 +95,15 @@
         ctx.strokeRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				ctx.fillRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				//console.log(room);
+			}
+			function drawCharacter(character){
+				let size = screenScale/20,
+				pos = toScreenPos({x:character.x,y:character.y},size);//{x:screen.width/2-(size/2)+(camera.x)+player.x,y:screen.height/2-(size/2)+(camera.y)-player.y};
+				ctx.fillStyle = 'red';
+				//ctx.fillRect(pos.x,pos.y,size,size);
+				ctx.strokeRect(pos.x,pos.y,size,size);
+				ctx.fillRect(pos.x,pos.y,size,size);
+				
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
 				let aspectRatio = screen.width/screen.height,
