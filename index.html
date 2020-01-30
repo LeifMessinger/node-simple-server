@@ -105,16 +105,63 @@
         window.requestAnimationFrame(draw);
         //drawRoom(makeRoom({x:1,y:0}));
 			}
-			function generateDungeon(size){
+			function generateDungeon(size,chance){
+				let recurse = function(x,y,chance){
+					if(x > 0){
+						if(!dungeon[x-1][y]){
+							if(Math.random()<chance){
+								dungeon[x-1][y] = true;
+								recurse(x-1,y,chance-.05);
+								chance -= .05;
+							}
+						}
+					}
+					if(x < dungeon.length){
+						if(!dungeon[x+1][y]){
+							if(Math.random()<chance){
+								dungeon[x+1][y] = true;
+								recurse(x+1,y,chance-.05);
+								chance -= .05;
+							}
+						}
+					}
+					if(y > 1){
+						if(!dungeon[x][y-1]){
+							if(Math.random()<chance){
+								dungeon[x][y-1] = true;
+								recurse(x,y-1,chance-.05);
+								chance -= .05;
+							}
+						}
+					}
+					if(y < dungeon[0].length-1){
+						if(!dungeon[x][y+1]){
+							if(Math.random()<chance){
+								dungeon[x][y+1] = true;
+								recurse(x,y+1,chance-.05);
+								chance -= .05;
+							}
+						}
+					}
+				}
 				dungeon = [];
 				for(r = 0; r < size; r++){
+					row = [];
+					for(c = 0; c < size; c++){
+						if(r==Math.floor(size/2) && c == Math.floor(size/2)) row.push(true);
+						else row.push(false);
+					}
+					dungeon.push(row);
+				}
+				recurse(Math.floor(size/2),Math.floor(size/2),1.0);
+				/*for(r = 0; r < size; r++){
 					row = [];
 					for(c = 0; c < size; c++){
 						if(r==Math.floor(size/2) && c == Math.floor(size/2)) row.push(true);
 						else row.push(Math.random()<.5?false:true);
 					}
 					dungeon.push(row);
-				}
+				}*/
 				/*for(r in dungeon){
 					alert(dungeon[r]);
 				}*/
