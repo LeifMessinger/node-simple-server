@@ -24,7 +24,7 @@
 		<br>
 		<script>
 			var screen = document.getElementById('screen');
-			var zoom = {x:1,y:1};//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
+			var zoom = .2;//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
       var screenScale = 1; //Math.min(screen.width,screen.height)
 			var roomSize = {x:1,y:0.5625};//Size of a normal room
       var mousePos = {x:0,y:0};
@@ -60,8 +60,8 @@
 	  }
     function makeCharacter(pos,size){
 				let aspectRatio = screen.width/screen.height,
-          roomWidth = zoom.x*roomSize.x*screenScale,
-          roomHeight = zoom.y*roomSize.y*screenScale,
+          roomWidth = roomSize.x*screenScale,
+          roomHeight = roomSize.y*screenScale,
 				roomPos = {x:(camera.x + (screen.width/2) - (size/2) + (pos.x*roomWidth)),
           y:(camera.y + (screen.height/2) - (size/2) - (pos.y*roomHeight))}; //y positive is up
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
@@ -75,7 +75,7 @@
 					y = win.innerHeight|| docElem.clientHeight|| body.clientHeight;
 				screen.height = y;
 				screen.width = x;
-        screenScale = Math.min(x,y*(1/roomSize.y));
+        screenScale = Math.min(x,y*(1/roomSize.y))*zoom;
         mouseWeight = .2;
         ctx.lineWidth = screenScale/100;
         updateCamera();
@@ -116,7 +116,7 @@
 							}
 						}
 					}
-					if(x < dungeon.length){
+					if(x < dungeon.length-1){
 						if(!dungeon[x+1][y]){
 							if(Math.random()<chance){
 								dungeon[x+1][y] = true;
@@ -183,8 +183,8 @@
 			}
 			function makeRoom(pos/*{x:1,y:1}*/){
 				let aspectRatio = screen.width/screen.height,
-          roomWidth = zoom.x*roomSize.x*screenScale,
-          roomHeight = zoom.y*roomSize.y*screenScale,
+          roomWidth = roomSize.x*screenScale,
+          roomHeight = roomSize.y*screenScale,
 				roomPos = {x:(camera.x + (screen.width/2) - (roomWidth/2) + (pos.x*roomWidth)),
           y:(camera.y + (screen.height/2) - (roomHeight/2) - (pos.y*roomHeight))}; //y positive is up
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
@@ -210,7 +210,16 @@
           case 87: //w
             player.up = true;
             break;
+          case 189: //-
+            zoom -= .1;
+            resize();
+            break;
+          case 187: //=
+            zoom += .1;
+            resize();
+            break;
         }
+        console.log(keyCode);
       }
       function onKeyUp(event) {
         let keyCode = event.keyCode;
