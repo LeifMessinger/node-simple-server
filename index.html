@@ -46,26 +46,36 @@
       player.getColliders = function(){
         let room = this.currentRoom(),
         colliders = {};
+        if(room.x < 0 || room.x >= dungeon.length) return colliders;
+        if(room.y < 0 || room.y >= dungeon[0].length) return colliders;
         if(room.x > 0){
           if(!dungeon[room.x-1][room.y]){
-            colliders.left = (room.x-dungeon.length/2)-(roomSize.x/2);
+            colliders.left = (roomSize.x*room.x-dungeon.length/2)-.5;
           }
+        }else{
+          colliders.left = (roomSize.x*room.x-dungeon.length/2)-.5;
         }
         if(room.x < dungeon.length-1){
           if(!dungeon[room.x+1][room.y]){
-            colliders.right = (room.x-dungeon.length/2)+(roomSize.x/2);
+            colliders.right = (roomSize.x*room.x-dungeon.length/2)+.5;
           }
+        }else{
+          colliders.right = (roomSize.x*room.x-dungeon.length/2)+.5;
         }
-        /*if(room.y > 1){
+        if(room.y > 1){
           if(!dungeon[room.x][room.y-1]){
-            colliders.down = (room.y-dungeon[0].length/2) - (roomSize.y/2);
-          }
+          colliders.down = (roomSize.y*(room.y-dungeon[0].length/2)) - (roomSize.y*.5);
+        }
+        }else{
+          colliders.down = (roomSize.y*(room.y-dungeon[0].length/2)) - (roomSize.y*.5);
         }
         if(room.y < dungeon[0].length-1){
           if(!dungeon[room.x][room.y+1]){
-            colliders.up = (room.y-dungeon[0].length/2);//+(roomSize.y);
+            colliders.up = (roomSize.y*(room.y-dungeon[0].length/2)) + (roomSize.y*.5);
           }
-        }*/
+        }else{
+          colliders.up = (roomSize.y*(room.y-dungeon[0].length/2)) + (roomSize.y*.5);
+        }
         return colliders;
       };
       draw();
@@ -121,7 +131,7 @@
           if(player.down) if(colliders.down == null || colliders.down < player.y - player.speed) player.y -= player.speed;
           if(player.right) if(colliders.right == null || colliders.right > player.x + player.speed) player.x += player.speed;
           if(player.left) if(colliders.left == null || colliders.left < player.x - player.speed) player.x -= player.speed;
-          if(colliders.left != null || colliders.right != null) console.log("BRUH");
+          //if(colliders.left != null || colliders.right != null) console.log("BRUH");
         }else{ //Player does not move
 
         }
@@ -225,8 +235,8 @@
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
 			}
 			function registerMouseClick(event) {
-				console.log("clientX: " + event.clientX + " - clientY: " + event.clientY);
-        console.log(camera);
+				//console.log("clientX: " + event.clientX + " - clientY: " + event.clientY);
+        //console.log(camera);
 				//draw();
 			}
       function onKeyDown(event) {
@@ -253,7 +263,7 @@
             resize();
             break;
         }
-        console.log(keyCode);
+        //console.log(keyCode);
       }
       function onKeyUp(event) {
         let keyCode = event.keyCode;
