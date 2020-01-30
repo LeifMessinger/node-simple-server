@@ -30,16 +30,19 @@
       var mousePos = {x:0,y:0};
       var mouseWeight = .2;
       var camera = {x:0,y:0};
-      var player = {x:0,y:0,up:false,down:false,left:false,right:false,speed:.01}; //coordinates are % of a room
 			var ctx = screen.getContext("2d");
 			var backgroundColor = "dimgray";
       var stroke = 'black';
       ctx.strokeStyle = stroke;
-      ctx.lineWidth = screenScale/100;
 			var dungeon = [];
 			var dungeonSize = 10;
+      var player = {x:0,y:0/*coordinates are % of a roomnScale/100*/,up:false,down:false,left:false,right:false,speed:.01};
       resize();
 			generateDungeon(dungeonSize,.8);
+      player.currentRoom = function(){
+        return {x:Math.ceil(((this.x/roomSize.x)-.5)+(dungeon.length/2)),
+        y:Math.ceil(((this.y/roomSize.y)-.5)+(dungeon.length/2))};
+      };
       draw();
 			//single room, x and y are pos on map
 			/* How to create pattern for later
@@ -62,8 +65,8 @@
 	  }
     function makeCharacter(pos,size){
 				let aspectRatio = screen.width/screen.height,
-          roomWidth = roomSize.x*screenScale,
-          roomHeight = roomSize.y*screenScale,
+          roomWidth = screenScale,
+          roomHeight = screenScale,
 				roomPos = {x:(camera.x + (screen.width/2) - (size/2) + (pos.x*roomWidth)),
           y:(camera.y + (screen.height/2) - (size/2) - (pos.y*roomHeight))}; //y positive is up
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
@@ -99,7 +102,7 @@
 				ctx.fillRect(0,0,screen.width,screen.height);
 				for(r in dungeon){
 					for(c in dungeon[r]){
-						if(dungeon[r][c]) drawRoom(makeRoom({x:r-Math.floor(dungeonSize/2),y:c-Math.floor(dungeonSize/2)}));
+						if(dungeon[r][c]) drawRoom(makeRoom({x:r-Math.floor(dungeonSize/2),y:c-Math.floor(dungeonSize/2)}),(r == player.currentRoom().x && c == player.currentRoom().y));
 					}
 				}
 				drawCharacter(player);
@@ -167,8 +170,8 @@
 					alert(dungeon[r]);
 				}*/
 			}
-			function drawRoom(room){
-				ctx.fillStyle = 'sienna';
+			function drawRoom(room,current){
+				if(current) ctx.fillStyle = 'chocolate'; else ctx.fillStyle = 'sienna';
         ctx.strokeRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				ctx.fillRect(room.pos.x,room.pos.y,room.scale.x,room.scale.y);
 				//console.log(room);
