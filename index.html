@@ -43,6 +43,31 @@
         return {x:Math.ceil(((this.x/roomSize.x)-.5)+(dungeon.length/2)),
         y:Math.ceil(((this.y/roomSize.y)-.5)+(dungeon.length/2))};
       };
+      player.getColliders = function(){
+        let room = this.currentRoom(),
+        colliders = {};
+        if(room.x > 0){
+          if(!dungeon[room.x-1][room.y]){
+            colliders.left = (room.x-dungeon.length/2)-(roomSize.x/2);
+          }
+        }
+        if(room.x < dungeon.length-1){
+          if(!dungeon[room.x+1][room.y]){
+            colliders.right = (room.x-dungeon.length/2)+(roomSize.x/2);
+          }
+        }
+        /*if(room.y > 1){
+          if(!dungeon[room.x][room.y-1]){
+            colliders.down = (room.y-dungeon[0].length/2) - (roomSize.y/2);
+          }
+        }
+        if(room.y < dungeon[0].length-1){
+          if(!dungeon[room.x][room.y+1]){
+            colliders.up = (room.y-dungeon[0].length/2);//+(roomSize.y);
+          }
+        }*/
+        return colliders;
+      };
       draw();
 			//single room, x and y are pos on map
 			/* How to create pattern for later
@@ -90,10 +115,16 @@
 			} else { //The browser does not support Javascript event binding
 			}
       function walk(){
-        if(player.up) player.y += player.speed;
-        if(player.down) player.y -= player.speed;
-        if(player.right) player.x += player.speed;
-        if(player.left) player.x -= player.speed;
+        if(player.up || player.down || player.right || player.left){ //Player is moving
+          let colliders = player.getColliders()
+          if(player.up) if(colliders.up == null || colliders.up > player.y + player.speed) player.y += player.speed;
+          if(player.down) if(colliders.down == null || colliders.down < player.y - player.speed) player.y -= player.speed;
+          if(player.right) if(colliders.right == null || colliders.right > player.x + player.speed) player.x += player.speed;
+          if(player.left) if(colliders.left == null || colliders.left < player.x - player.speed) player.x -= player.speed;
+          if(colliders.left != null || colliders.right != null) console.log("BRUH");
+        }else{ //Player does not move
+
+        }
       }
 			function draw(){
         walk();
