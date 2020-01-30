@@ -24,7 +24,7 @@
 		<br>
 		<script>
 			var screen = document.getElementById('screen');
-			var zoom = .2;//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
+			var zoom = .1;//{x:.8,y:.8};//How large a 1x1 room is compared to the screen percent
       var screenScale = 1; //Math.min(screen.width,screen.height)
 			var roomSize = {x:1,y:0.5625};//Size of a normal room
       var mousePos = {x:0,y:0};
@@ -38,7 +38,9 @@
       ctx.lineWidth = screenScale/100;
 			var dungeon = [];
 			var dungeonSize = 10;
-			generateDungeon(dungeonSize);
+      resize();
+			generateDungeon(dungeonSize,.8);
+      draw();
 			//single room, x and y are pos on map
 			/* How to create pattern for later
 			var img = new Image;
@@ -84,7 +86,6 @@
 				window.addEventListener('resize',resize, true); //the true is "useCapture"
 			} else { //The browser does not support Javascript event binding
 			}
-			resize();
       function walk(){
         if(player.up) player.y += player.speed;
         if(player.down) player.y -= player.speed;
@@ -111,8 +112,8 @@
 						if(!dungeon[x-1][y]){
 							if(Math.random()<chance){
 								dungeon[x-1][y] = true;
-								recurse(x-1,y,chance-.05);
-								chance -= .05;
+                chance -= 1/size;
+								recurse(x-1,y,chance);
 							}
 						}
 					}
@@ -120,8 +121,8 @@
 						if(!dungeon[x+1][y]){
 							if(Math.random()<chance){
 								dungeon[x+1][y] = true;
-								recurse(x+1,y,chance-.05);
-								chance -= .05;
+								chance -= 1/size;
+								recurse(x+1,y,chance);
 							}
 						}
 					}
@@ -129,8 +130,8 @@
 						if(!dungeon[x][y-1]){
 							if(Math.random()<chance){
 								dungeon[x][y-1] = true;
-								recurse(x,y-1,chance-.05);
-								chance -= .05;
+                chance -= 1/size;
+								recurse(x,y-1,chance);
 							}
 						}
 					}
@@ -138,8 +139,8 @@
 						if(!dungeon[x][y+1]){
 							if(Math.random()<chance){
 								dungeon[x][y+1] = true;
-								recurse(x,y+1,chance-.05);
-								chance -= .05;
+                chance -= 1/size;
+								recurse(x,y+1,chance);
 							}
 						}
 					}
@@ -189,7 +190,6 @@
           y:(camera.y + (screen.height/2) - (roomHeight/2) - (pos.y*roomHeight))}; //y positive is up
 				return {pos:roomPos,scale:{x:roomWidth,y:roomHeight}}; //Pos, size room
 			}
-			draw();
 			function registerMouseClick(event) {
 				console.log("clientX: " + event.clientX + " - clientY: " + event.clientY);
         console.log(camera);
@@ -211,11 +211,11 @@
             player.up = true;
             break;
           case 189: //-
-            zoom -= .1;
+            zoom /= 2;
             resize();
             break;
           case 187: //=
-            zoom += .1;
+            zoom *= 2;
             resize();
             break;
         }
