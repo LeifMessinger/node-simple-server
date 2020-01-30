@@ -36,7 +36,10 @@
       var stroke = 'black';
       ctx.strokeStyle = stroke;
       ctx.lineWidth = screenScale/100;
-			var thisRoomIsBigEnoughForTheBothOfUs = {x:0,y:0};//single room, x and y are pos on map
+			var dungeon = [];
+			var dungeonSize = 10;
+			generateDungeon(dungeonSize);
+			//single room, x and y are pos on map
 			/* How to create pattern for later
 			var img = new Image;
 			img.onload = imageIsReady;
@@ -93,10 +96,28 @@
         updateCamera();
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(0,0,screen.width,screen.height);
-				drawRoom(makeRoom(thisRoomIsBigEnoughForTheBothOfUs));
+				for(r in dungeon){
+					for(c in dungeon[r]){
+						if(dungeon[r][c]) drawRoom(makeRoom({x:r-Math.floor(dungeonSize/2),y:c-Math.floor(dungeonSize/2)}));
+					}
+				}
 				drawCharacter(player);
         window.requestAnimationFrame(draw);
         //drawRoom(makeRoom({x:1,y:0}));
+			}
+			function generateDungeon(size){
+				dungeon = [];
+				for(r = 0; r < size; r++){
+					row = [];
+					for(c = 0; c < size; c++){
+						if(r==Math.floor(size/2) && c == Math.floor(size/2)) row.push(true);
+						else row.push(Math.random()<.5?false:true);
+					}
+					dungeon.push(row);
+				}
+				/*for(r in dungeon){
+					alert(dungeon[r]);
+				}*/
 			}
 			function drawRoom(room){
 				ctx.fillStyle = 'sienna';
