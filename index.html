@@ -10,7 +10,6 @@
 		<script>
 			var socket = io.connect();
 			var textos = document.getElementById('yeet');
-			console.log(document.getElementById('yeet'));
 			textos.innerText = "Connecting...";
 			socket.on('disconnected', function (username) {
 				textos.innerText = "Failed.";
