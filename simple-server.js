@@ -1,35 +1,16 @@
 var fs = require('fs');
 module.exports = {
-	urlIntoDictionary: function(uniformResourceLocator){
-		let dic = {};
-		if(uniformResourceLocator.indexOf("?") >= 0){
-			let definitions = uniformResourceLocator.split("?");
-			definitions.shift();	//Exclude path
-			for(definition in definitions){
-				let parallel = definition.indexOf("=");
-				if(parallel >=0){
-				let key = definition.substring(0,parallel);
-				let value = definition.substring(parallel+1);
-				//console.log('%s = %s',key,value);
-				dic[key] = value;
-				}
-				console.log(Object.entries(dic));
-			}
-			return dic;
-		}
-		return false;
-	},
 	http: async function(req, res){
 		let path = ""+__dirname+req.url;
 		// The filename is simple the local directory and tacks on the requested url
 		// This line opens the file as a readable stream
+		console.log(path); //Acknowlage request
 		let readStream = fs.createReadStream("index.html");
-		console.log(""+__dirname+req.url); //Acknowlage request
-		let dic = module.exports.urlIntoDictionary(req.url);
-		if(dic != false){
-			req.url = req.url.substring(0,req.url.indexOf("?"));
-		}
 		if(req.url === '/') readStream = fs.createReadStream("index.html");
+		if(req.url.indexOf("favicon.ico") >= 0){
+			res.end();
+			return;
+		}
 		else if (req.url.indexOf(".") >= 0){//if it is a file
 			path = __dirname+ req.url;
 			console.log("Trying to read " + path);
