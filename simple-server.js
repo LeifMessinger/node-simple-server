@@ -1,16 +1,20 @@
 var fs = require('fs');
 module.exports = {
+	blacklist: ['favicon.ico','clientsecret.txt'],
 	http: async function(req, res){
 		let path = ""+__dirname+req.url;
+		let blacklist = module.exports.blacklist;
 		// The filename is simple the local directory and tacks on the requested url
 		// This line opens the file as a readable stream
 		console.log(path); //Acknowlage request
 		let readStream = fs.createReadStream("index.html");
-		if(req.url === '/') readStream = fs.createReadStream("index.html");
-		if(req.url.indexOf("favicon.ico") >= 0){
-			res.end();
-			return;
+		for(let b in blacklist){
+			if(req.url.indexOf(blacklist[b]) >= 0){
+				res.end();
+				return;
+			}
 		}
+		if(req.url === '/') readStream = fs.createReadStream("index.html");
 		else if (req.url.indexOf(".") >= 0){//if it is a file
 			path = __dirname+ req.url;
 			console.log("Trying to read " + path);
