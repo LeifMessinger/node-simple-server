@@ -1,1 +1,0 @@
-alert("Subfolder js works!")
