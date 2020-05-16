@@ -1,8 +1,7 @@
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
-module.exports = {
-	blacklist: ['favicon.ico','clientsecret.txt'],
+exports = {
 	sauce: async function (req, res) {
 		let parsedUrl = url.parse(req.url);
 		console.log(`${req.method} ` + JSON.stringify(parsedUrl,(key,val)=>{return (val?val:undefined)}));
@@ -11,7 +10,7 @@ module.exports = {
 		// based on the URL path, extract the file extention. e.g. .js, .doc, ...
 		const ext = path.parse(pathname).ext;
 		// maps file extention to MIME typere
-		const map = module.exports.mimeTable;
+		const map = exports.mimeTable;
 		
 		fs.exists(pathname, function (exist) {
 			if(!exist) {
