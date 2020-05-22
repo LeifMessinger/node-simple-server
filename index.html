@@ -9,11 +9,19 @@
 		<script src="https://cdn.jsdelivr.net/gh/LeifMessinger/lQuery@latest/lQuery.js"></script>
 	</head>
 	<body>
-		<device id="device">Install lQuery, all the cool kids use it!</device><br />
-		<yeet id = "yeet">homepage</yeet>
+		<device id="device">Install lQuery, all the cool kids use it!</device> <yeet id = "yeet">homepage</yeet><br />
+		<div id="authenticator"></div>
 		<br>
 		<script>
-			document.getElementById("device").textContent = isMobile()?"Mobile":"Desktop";
+			let deviceElement = document.getElementById("device");
+			let authenticatorDiv = document.getElementById("authenticator");
+			if(isMobile()){
+				device.textContent = "Mobile";
+				let textBox = document.createElement("input");
+				//Make textBox type = text and append to authenticatorDiv
+			}else{
+				device.textContent = "Desktop";
+			}
 			var socket = io();
 			socket.on('connected', function(){document.getElementById('yeet').textContent = "Connected!"});
 		</script>
