@@ -8,7 +8,7 @@ const server = http.createServer(simple.sauce);
 const io = require('socket.io')(server);
 io.on('connection', function(socket){
 	socket.authCode = Math.floor(Math.random()*9999);
-	socket.emit('connected',authCode);
+	socket.emit('connected',socket.authCode);
 	let count = 0;
 	io.sockets.clients((error, clients) => {
 		if (error) throw error;	//How do I ignore error pleas halp
