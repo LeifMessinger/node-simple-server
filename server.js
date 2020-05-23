@@ -12,17 +12,13 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function(reason){
 		connections.splice(connections.indexOf(socket),1);
 	});
+	socket.on('authenticate', function(code){
+		for(let c in connections) if(connections[c].authCode == code) connections[c].emit('authenticated');
+	});
 	socket.authCode = Math.floor(Math.random()*9999);
 	socket.emit('connected',socket.authCode);
-	let count = 0;
-	io.sockets.clients((error, clients) => {
-		if (error) throw error;	//How do I ignore error pleas halp
-		count = clients.length;
-	});
+	let count = connections.length;
 	console.log("Connected: " + count + " clients.")
-});
-io.on('authenticate', function(code){
-	for(let c in connections) if(connections[c].authCode == code) connections[c].emit('authenticated');
 });
 //Start Server
 server.listen(port);

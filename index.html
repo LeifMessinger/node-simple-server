@@ -6,24 +6,51 @@
 		<title>Homepage</title>
 		<!--<script src="//code.jquery.com/jquery.js"></script>-->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/gh/LeifMessinger/lQuery@latest/lQuery.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/LeifMessinger/lQuery/lQuery.js"></script>
 	</head>
 	<body>
 		<device id="device">Install lQuery, all the cool kids use it!</device> <yeet id = "yeet">homepage</yeet><br />
-		<div id="authenticator"></div>
+		<div id="authenticator">
+			
+		</div>
 		<br>
 		<script>
+			var socket = io();
 			let deviceElement = document.getElementById("device");
 			let authenticatorDiv = document.getElementById("authenticator");
 			if(isMobile()){
 				device.textContent = "Mobile";
 				let textBox = document.createElement("input");
+				textBox.type = "text";
+				let authButton = document.createElement("input");
+				authButton.type = "button";
+				authButton.value = "Authorize";
+				authButton.addEventListener("click", function(){
+					socket.emit("authenticate", textBox.value)
+				});
+				socket.on('connected', function(authCode){
+					document.getElementById('yeet').textContent = "Connected!";
+				});
+				authenticatorDiv.appendChild(textBox);
+				authenticatorDiv.appendChild(authButton);
 				//Make textBox type = text and append to authenticatorDiv
 			}else{
 				device.textContent = "Desktop";
+				let h1 = document.createElement("h1");
+				h1.id = "authCode";
+				h1.appendChild(document.createElement("br"));
+				socket.on('connected', function(authCode){
+					let yay = "Connected!";
+					document.getElementById('yeet').textContent = yay;
+					h1.textContent = authCode + "";
+				});
+				socket.on('authenticated', function(){
+					let yay = "Authenticated!";
+					document.getElementById('yeet').textContent = yay;
+				});
+				authenticatorDiv.appendChild(h1);
 			}
-			var socket = io();
-			socket.on('connected', function(){document.getElementById('yeet').textContent = "Connected!"});
+			socket.on('authenticated', function(){document.getElementById('yeet').textContent = "Authenticated!"});
 		</script>
 	</body>
 </html>
